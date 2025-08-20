@@ -20,7 +20,12 @@ void Game::solve() {
   // Prints out the state of the game:
   cout << *this << endl;
 
-  // @TODO -- Finish solving the game!
+  // Define the target size
+  unsigned idxStaIni = 0;
+  unsigned idxStaFin = 2;
+  unsigned idxStaSpa = 1;
+  moveSta(idxStaIni, idxStaFin, idxStaSpa, 0);
+  
 }
 
 // Default constructor to create the initial state:
@@ -44,6 +49,37 @@ Game::Game() {
   Cube yellow(1, uiuc::HSLAPixel::YELLOW);
   stacks_[0].push_back(yellow);
 }
+
+void Game::move(unsigned idxStaIni, unsigned idxStaFin){
+  if ( stacks_.size() <= idxStaIni || stacks_.size() <= idxStaFin || idxStaIni < 0 || idxStaFin < 0 || idxStaIni==idxStaFin){
+    throw std::runtime_error("Moving indices requested out of range");
+  }
+  if ( stacks_[idxStaIni].size() <= 0){
+    throw std::runtime_error("Starting stack to be moved is empty");
+  }
+  if ( stacks_[idxStaFin].size() > 0 && stacks_[idxStaIni].peekTop().getLength() >= stacks_[idxStaFin].peekTop().getLength()){
+    throw std::runtime_error("Illegal move requested");
+  } else {
+    Cube cubeRm = stacks_[idxStaIni].removeTop();
+    stacks_[idxStaFin].push_back(cubeRm);
+  }
+}
+
+void Game::moveSta(unsigned idxStaIni, unsigned idxStaFin, unsigned idxStaSpa, unsigned level){
+  if ((stacks_[idxStaIni].size()-level) > 1){
+    unsigned levRetSta = stacks_[idxStaSpa].size();
+    moveSta(idxStaIni,idxStaSpa,idxStaFin,level+1);
+    move(idxStaIni,idxStaFin);
+    cout << *this << endl;
+    moveSta(idxStaSpa,idxStaFin,idxStaIni,levRetSta);
+  } else if ((stacks_[idxStaIni].size()-level) == 1){
+    move(idxStaIni,idxStaFin);
+    cout << *this << endl;
+  } else {
+    throw std::runtime_error("Starting stack has no cube");
+  }
+}
+
 
 std::ostream& operator<<(std::ostream & os, const Game & game) {
   for (unsigned i = 0; i < game.stacks_.size(); i++) {

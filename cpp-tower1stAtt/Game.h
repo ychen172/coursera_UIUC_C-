@@ -15,6 +15,10 @@ class Game {
     Game();
     void solve();
 
+    void move(unsigned idxStaIni, unsigned idxStaFin);
+
+    void moveSta(unsigned idxStaIni, unsigned idxStaFin,  unsigned idxStaSpa, unsigned level);
+
     // An overloaded operator<<, allowing us to print the stack via `cout<<`:
     friend std::ostream& operator<<(std::ostream & os, const Game & game);
 
